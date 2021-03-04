@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace FootballLeague_Interview.DAL.Entities
@@ -32,5 +33,23 @@ namespace FootballLeague_Interview.DAL.Entities
         [Required]
         [Range(1850, 4000)]
         public int YearEndOfSeason { get; set; }
+
+        // ex. isoSeasonName = 2018/2019
+        public static Season FromISOString(string isoSeasonName)
+        {
+            var yearRange = ExtractStartEndYears(isoSeasonName);
+            return new Season
+            {
+                YearStartOfSeason = yearRange.seasonStartYear,
+                YearEndOfSeason = yearRange.seasonEndYear
+            };
+        }
+
+        private static (int seasonStartYear, int seasonEndYear) ExtractStartEndYears(string seasonName)
+        {
+            var regex = new Regex(@"(\d+)/(\d+)");
+            var match = regex.Match(seasonName);
+            return (int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
+        }
     }
 }

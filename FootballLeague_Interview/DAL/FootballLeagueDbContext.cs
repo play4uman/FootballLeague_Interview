@@ -26,6 +26,12 @@ namespace FootballLeague_Interview.DAL
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // We create an index instead of using it as a primary key simply because it's more convenient to have a one-field key
+            // for an entity in Entity Framework.
+            modelBuilder.Entity<Team>()
+                .HasIndex(t => new { t.Name, t.DomesticLeagueName })
+                .IsUnique();
+
             modelBuilder.Entity<Result>()
                 .HasOne(r => r.HomeTeam)
                 .WithMany(ht => ht.HomeResults)
@@ -34,6 +40,11 @@ namespace FootballLeague_Interview.DAL
             modelBuilder.Entity<Result>()
                 .HasOne(r => r.AwayTeam)
                 .WithMany(at => at.AwayResults)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Result>()
+                .HasOne(r => r.OfStandings)
+                .WithMany(s => s.ResultsDuringTheSeason)
                 .OnDelete(DeleteBehavior.NoAction);
 
             modelBuilder.Entity<Standings>()

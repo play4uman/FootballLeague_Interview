@@ -4,14 +4,16 @@ using FootballLeague_Interview.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FootballLeague_Interview.Migrations
 {
     [DbContext(typeof(FootballLeagueDbContext))]
-    partial class FootballLeagueDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210304144719_AddIndexToTeamsTable")]
+    partial class AddIndexToTeamsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,10 +55,6 @@ namespace FootballLeague_Interview.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("LeagueId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("SeasonId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -67,9 +65,7 @@ namespace FootballLeague_Interview.Migrations
 
                     b.HasIndex("HomeTeamId");
 
-                    b.HasIndex("LeagueId");
-
-                    b.HasIndex("SeasonId", "LeagueId");
+                    b.HasIndex("SeasonId");
 
                     b.ToTable("Results");
                 });
@@ -188,31 +184,15 @@ namespace FootballLeague_Interview.Migrations
                         .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
-                    b.HasOne("FootballLeague_Interview.DAL.Entities.DomesticLeague", "League")
-                        .WithMany()
-                        .HasForeignKey("LeagueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("FootballLeague_Interview.DAL.Entities.Season", "Season")
                         .WithMany()
                         .HasForeignKey("SeasonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("FootballLeague_Interview.DAL.Entities.Standings", "OfStandings")
-                        .WithMany("ResultsDuringTheSeason")
-                        .HasForeignKey("SeasonId", "LeagueId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
                     b.Navigation("AwayTeam");
 
                     b.Navigation("HomeTeam");
-
-                    b.Navigation("League");
-
-                    b.Navigation("OfStandings");
 
                     b.Navigation("Season");
                 });
@@ -269,8 +249,6 @@ namespace FootballLeague_Interview.Migrations
 
             modelBuilder.Entity("FootballLeague_Interview.DAL.Entities.Standings", b =>
                 {
-                    b.Navigation("ResultsDuringTheSeason");
-
                     b.Navigation("StandingRows");
                 });
 

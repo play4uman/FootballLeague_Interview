@@ -16,6 +16,7 @@ namespace FootballLeague_Interview.DAL.Entities
         public string LeagueId { get; set; }
         public DomesticLeague League { get; set; }
         public ICollection<StandingRow> StandingRows { get; set; }
+        public ICollection<Result> ResultsDuringTheSeason { get; set; }
 
         public StandingsDTO ToDto()
         {

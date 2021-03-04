@@ -20,8 +20,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
         public async Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest)
         {
-            var startEndSeasonYears = ExtractStartEndYears(initiateStandingsRequest.Season);
-            var newSeason = new Season { YearStartOfSeason = startEndSeasonYears.seasonStartYear, YearEndOfSeason = startEndSeasonYears.seasonEndYear };
+            var newSeason = Season.FromISOString(initiateStandingsRequest.Season);
 
             bool standingsAlreadyExist = await _dbContext.Standings.FindAsync(newSeason.FullName, initiateStandingsRequest.LeagueName) != null;
             if (standingsAlreadyExist)
@@ -61,8 +60,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
             if (findTeamParams.Season != null)
             {
-                var extractedYears = ExtractStartEndYears(findTeamParams.Season);
-                var toSearch = new Season { YearStartOfSeason = extractedYears.seasonStartYear, YearEndOfSeason = extractedYears.seasonEndYear };
+                var toSearch = Season.FromISOString(findTeamParams.Season);
                 standingsQuery = standingsQuery.Where(s => s.SeasonId == toSearch.FullName);
             }
 
@@ -79,11 +77,6 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             throw new NotImplementedException();
         }
 
-        private (int seasonStartYear, int seasonEndYear) ExtractStartEndYears(string seasonName)
-        {
-            var regex = new Regex(@"(\d+)/(\d+)");
-            var match = regex.Match(seasonName);
-            return (int.Parse(match.Groups[1].Value), int.Parse(match.Groups[2].Value));
-        }
+
     }
 }
