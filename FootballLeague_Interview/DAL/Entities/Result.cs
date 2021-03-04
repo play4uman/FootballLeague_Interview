@@ -13,13 +13,11 @@ namespace FootballLeague_Interview.DAL.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [ForeignKey(nameof(HomeTeam))]
-        public string HomeTeamName { get; set; }
+        public string HomeTeamId { get; set; }
         public Team HomeTeam { get; set; }
 
         [Required]
-        [ForeignKey(nameof(AwayTeam))]
-        public string AwayTeamName { get; set; }
+        public string AwayTeamId { get; set; }
         public Team AwayTeam { get; set; }
 
         [Required]
@@ -30,7 +28,7 @@ namespace FootballLeague_Interview.DAL.Entities
         [Range(0, int.MaxValue)]
         public int GoalsScoredAwayTeam { get; set; }
 
-        public bool Draw => GoalsScoredHomeTeam == GoalsScoredAwayTeam;
+        public bool Draw { get => GoalsScoredHomeTeam == GoalsScoredAwayTeam; }
         public Team Winner 
         {
             get 

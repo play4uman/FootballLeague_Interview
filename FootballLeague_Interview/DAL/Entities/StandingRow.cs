@@ -13,8 +13,7 @@ namespace FootballLeague_Interview.DAL.Entities
         public Guid Id { get; set; }
 
         [Required]
-        [ForeignKey(nameof(Team))]
-        public string TeamName { get; set; }
+        public string TeamId { get; set; }
         public Team Team { get; set; }
 
         [Required]
