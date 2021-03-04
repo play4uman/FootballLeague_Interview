@@ -9,8 +9,22 @@ namespace FootballLeague_Interview.DAL.Entities
     public class Season
     {
         public const string StartEndOfSeasonDelimiter = "-";
+
+        private string fullName = null;
         [Key]
-        public string FullName { get => $"{YearStartOfSeason}{StartEndOfSeasonDelimiter}{YearEndOfSeason}"; set => this.FullName = value; }
+        public string FullName
+        {
+            get
+            {
+                if (fullName == null)
+                    fullName = $"{YearStartOfSeason}{StartEndOfSeasonDelimiter}{YearEndOfSeason}";
+                return fullName;
+            }
+            set
+            {
+                fullName = value;
+            }
+        }
 
         [Required]
         [Range(1850, 4000)]

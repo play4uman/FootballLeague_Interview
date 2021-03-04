@@ -26,7 +26,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                 teamsQuery = teamsQuery.Where(t => findTeamParams.TeamNames.Contains(t.Name));
 
             
-            return teamsQuery.ToList();
+            return await teamsQuery.ToListAsync();
         }
 
         public async Task<string> AddAsync(PostTeamRequest postTeamRequest)
