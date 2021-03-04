@@ -21,6 +21,10 @@ namespace FootballLeague_Interview.DAL.Entities
         public Team AwayTeam { get; set; }
 
         [Required]
+        public string SeasonId { get; set; }
+        public Season Season { get; set; }
+
+        [Required]
         [Range(0, int.MaxValue)]
         public int GoalsScoredHomeTeam { get; set; }
 

@@ -18,6 +18,7 @@ namespace FootballLeague_Interview.DAL
         public DbSet<DomesticLeague> Leagues { get; set; }
         public DbSet<Result> Results { get; set; }
         public DbSet<Standings> Standings { get; set; }
+        public DbSet<Season> Seasons { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -34,6 +35,9 @@ namespace FootballLeague_Interview.DAL
                 .HasOne(r => r.AwayTeam)
                 .WithMany(at => at.AwayResults)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Season>()
+                .HasKey(s => new { s.YearStartOfSeason, s.YearEndOfSeason });
         }
     }
 }

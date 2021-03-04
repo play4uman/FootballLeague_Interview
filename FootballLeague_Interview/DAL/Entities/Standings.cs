@@ -9,7 +9,8 @@ namespace FootballLeague_Interview.DAL.Entities
     public class Standings
     {
         [Key]
-        public string OfSeason { get; set; }
+        public string SeasonId { get; set; }
+        public Season Season { get; set; }
         public ICollection<StandingRow> StandingRows { get; set; }
     }
 }
