@@ -1,4 +1,7 @@
 using FootballLeague_Interview.DAL;
+using FootballLeague_Interview.DAL.DataServices;
+using FootballLeague_Interview.DAL.DataServices.Abstractions;
+using FootballLeague_Interview.DAL.DataServices.Implementation;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -8,10 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 
 namespace FootballLeague_Interview
 {
@@ -34,6 +34,9 @@ namespace FootballLeague_Interview
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FootballLeague_Interview", Version = "v1" });
             });
+
+            services.AddTransient<ITeamService, TeamService>();
+            services.AddTransient<ILeagueService, LeagueService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

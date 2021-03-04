@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
+    <ProjectReference Include="..\FootballLeague_Interview.Shared\FootballLeague_Interview.Shared.csproj" />
   </ItemGroup>
 
 </Project>
