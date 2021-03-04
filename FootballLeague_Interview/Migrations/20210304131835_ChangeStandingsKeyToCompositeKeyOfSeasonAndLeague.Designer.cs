@@ -4,14 +4,16 @@ using FootballLeague_Interview.DAL;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FootballLeague_Interview.Migrations
 {
     [DbContext(typeof(FootballLeagueDbContext))]
-    partial class FootballLeagueDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210304131835_ChangeStandingsKeyToCompositeKeyOfSeasonAndLeague")]
+    partial class ChangeStandingsKeyToCompositeKeyOfSeasonAndLeague
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +57,13 @@ namespace FootballLeague_Interview.Migrations
 
                     b.Property<string>("SeasonId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("SeasonYearEndOfSeason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeasonYearStartOfSeason")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -63,23 +71,23 @@ namespace FootballLeague_Interview.Migrations
 
                     b.HasIndex("HomeTeamId");
 
-                    b.HasIndex("SeasonId");
+                    b.HasIndex("SeasonYearStartOfSeason", "SeasonYearEndOfSeason");
 
                     b.ToTable("Results");
                 });
 
             modelBuilder.Entity("FootballLeague_Interview.DAL.Entities.Season", b =>
                 {
-                    b.Property<string>("FullName")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("YearStartOfSeason")
+                        .HasColumnType("int");
 
                     b.Property<int>("YearEndOfSeason")
                         .HasColumnType("int");
 
-                    b.Property<int>("YearStartOfSeason")
-                        .HasColumnType("int");
+                    b.Property<string>("FullName")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("FullName");
+                    b.HasKey("YearStartOfSeason", "YearEndOfSeason");
 
                     b.ToTable("Seasons");
                 });
@@ -93,7 +101,7 @@ namespace FootballLeague_Interview.Migrations
                     b.Property<int>("Draws")
                         .HasColumnType("int");
 
-                    b.Property<int>("GoalsConceded")
+                    b.Property<int>("GoalsConceived")
                         .HasColumnType("int");
 
                     b.Property<int>("GoalsScored")
@@ -138,9 +146,17 @@ namespace FootballLeague_Interview.Migrations
                     b.Property<string>("LeagueId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<int>("SeasonYearEndOfSeason")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SeasonYearStartOfSeason")
+                        .HasColumnType("int");
+
                     b.HasKey("SeasonId", "LeagueId");
 
                     b.HasIndex("LeagueId");
+
+                    b.HasIndex("SeasonYearStartOfSeason", "SeasonYearEndOfSeason");
 
                     b.ToTable("Standings");
                 });
@@ -181,7 +197,7 @@ namespace FootballLeague_Interview.Migrations
 
                     b.HasOne("FootballLeague_Interview.DAL.Entities.Season", "Season")
                         .WithMany()
-                        .HasForeignKey("SeasonId")
+                        .HasForeignKey("SeasonYearStartOfSeason", "SeasonYearEndOfSeason")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -217,7 +233,7 @@ namespace FootballLeague_Interview.Migrations
 
                     b.HasOne("FootballLeague_Interview.DAL.Entities.Season", "Season")
                         .WithMany()
-                        .HasForeignKey("SeasonId")
+                        .HasForeignKey("SeasonYearStartOfSeason", "SeasonYearEndOfSeason")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

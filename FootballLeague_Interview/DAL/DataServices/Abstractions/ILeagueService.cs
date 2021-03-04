@@ -1,4 +1,5 @@
-﻿using FootballLeague_Interview.DAL.DataServices.FindParameters;
+﻿using FootballLeague_Interview.DAL.DataServices.Abstractions.Infrastructure;
+using FootballLeague_Interview.DAL.DataServices.FindParameters;
 using FootballLeague_Interview.DAL.Entities;
 using FootballLeague_Interview.Shared.DTO.Request;
 using FootballLeague_Interview.Shared.DTO.Response;
@@ -9,7 +10,8 @@ using System.Threading.Tasks;
 
 namespace FootballLeague_Interview.DAL.DataServices.Abstractions
 {
-    public interface ILeagueService : IDataService<LeagueDTO, FindLeagueParams, PostLeagueRequest, DomesticLeague>
+    public interface ILeagueService : ICanFindEntity<LeagueDTO, FindLeagueParams>, 
+        ICanAddEntity<PostLeagueRequest>, ICanUpdateEntity<DomesticLeague>, ICanDeleteEntity
     {
     }
 }

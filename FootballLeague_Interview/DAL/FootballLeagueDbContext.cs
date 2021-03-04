@@ -36,8 +36,8 @@ namespace FootballLeague_Interview.DAL
                 .WithMany(at => at.AwayResults)
                 .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<Season>()
-                .HasKey(s => new { s.YearStartOfSeason, s.YearEndOfSeason });
+            modelBuilder.Entity<Standings>()
+                .HasKey(s => new { s.SeasonId, s.LeagueId });
         }
     }
 }

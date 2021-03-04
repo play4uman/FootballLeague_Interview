@@ -37,6 +37,7 @@ namespace FootballLeague_Interview
 
             services.AddTransient<ITeamService, TeamService>();
             services.AddTransient<ILeagueService, LeagueService>();
+            services.AddTransient<IStandingsService, StandingsService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -26,7 +26,7 @@ namespace FootballLeague_Interview.DAL.Entities
 
         [Required]
         [Range(0, int.MaxValue)]
-        public int GoalsConceived { get; set; }
+        public int GoalsConceded { get; set; }
 
         [Required]
         [Range(0, int.MaxValue)]
@@ -43,5 +43,21 @@ namespace FootballLeague_Interview.DAL.Entities
         [Required]
         [Range(0, int.MaxValue)]
         public int Points { get; set; }
+
+        public static StandingRow EmptyRow(Team team)
+        {
+            return new StandingRow
+            {
+                Id = Guid.NewGuid(),
+                Team = team,
+                Played = 0,
+                Wins = 0,
+                Draws = 0,
+                Losses = 0,
+                GoalsScored = 0,
+                GoalsConceded = 0,
+                Points = 0,
+            };
+        }
     }
 }
