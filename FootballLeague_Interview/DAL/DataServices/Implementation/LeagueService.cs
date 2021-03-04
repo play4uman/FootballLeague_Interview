@@ -2,6 +2,8 @@
 using FootballLeague_Interview.DAL.DataServices.FindParameters;
 using FootballLeague_Interview.DAL.Entities;
 using FootballLeague_Interview.Shared.DTO.Request;
+using FootballLeague_Interview.Shared.DTO.Response;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,9 +44,19 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<DomesticLeague>> FindAsync(FindLeagueParams findTeamParams)
+        public async Task<IEnumerable<LeagueDTO>> FindAsync(FindLeagueParams findLeagueParams)
         {
-            throw new NotImplementedException();
+            IQueryable<DomesticLeague> leaguesQuery = _dbContext.Leagues
+                                                        .Include(l => l.Teams);
+            if (findLeagueParams.Country != null)
+                leaguesQuery = leaguesQuery.Where(t => t.Country.Equals(findLeagueParams.Country, StringComparison.OrdinalIgnoreCase));
+
+            if (findLeagueParams.LeagueNames != null)
+                leaguesQuery = leaguesQuery.Where(t => findLeagueParams.LeagueNames.Contains(t.Name));
+
+
+            return (await leaguesQuery.ToListAsync())
+                        .Select(t => t.ToDto());
         }
 
         public Task<string> UpdateAsync(DomesticLeague toUpdate)

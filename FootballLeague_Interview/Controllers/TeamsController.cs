@@ -3,6 +3,7 @@ using FootballLeague_Interview.DAL.DataServices.Abstractions;
 using FootballLeague_Interview.DAL.DataServices.FindParameters;
 using FootballLeague_Interview.DAL.Entities;
 using FootballLeague_Interview.Shared.DTO.Request;
+using FootballLeague_Interview.Shared.DTO.Response;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace FootballLeague_Interview.Controllers
         private readonly ITeamService _teamService;
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Team>>> GetTeams(string league, [FromQuery] string[] teamNames)
+        public async Task<ActionResult<IEnumerable<TeamDTO>>> GetTeams(string league, [FromQuery] string[] teamNames)
         {
             try
             {

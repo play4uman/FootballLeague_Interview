@@ -1,4 +1,5 @@
 ﻿using FootballLeague_Interview.Shared.DTO.Request;
+using FootballLeague_Interview.Shared.DTO.Response;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -12,6 +13,9 @@ namespace FootballLeague_Interview.DAL.Entities
         [Required]
         [Key]
         public string Name { get; set; }
+
+        [Required]
+        public string Country { get; set; }
         public ICollection<Team> Teams { get; set; }
 
         public static DomesticLeague FromRequest(PostLeagueRequest postLeagueRequest)
@@ -19,6 +23,16 @@ namespace FootballLeague_Interview.DAL.Entities
             return new DomesticLeague
             {
                 Name = postLeagueRequest.LeagueName
+            };
+        }
+
+        public LeagueDTO ToDto()
+        {
+            return new LeagueDTO
+            {
+                Name = this.Name,
+                Country = this.Country,
+                Teams = Teams.Select(t => t.Name)
             };
         }
     }

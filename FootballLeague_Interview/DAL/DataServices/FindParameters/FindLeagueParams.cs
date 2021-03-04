@@ -7,6 +7,7 @@ namespace FootballLeague_Interview.DAL.DataServices.FindParameters
 {
     public class FindLeagueParams
     {
-        string LeagueName { get; set; }
+        public string Country { get; set; } 
+        public string[] LeagueNames { get; set; }
     }
 }

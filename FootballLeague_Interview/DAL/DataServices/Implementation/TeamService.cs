@@ -2,6 +2,7 @@
 using FootballLeague_Interview.DAL.DataServices.FindParameters;
 using FootballLeague_Interview.DAL.Entities;
 using FootballLeague_Interview.Shared.DTO.Request;
+using FootballLeague_Interview.Shared.DTO.Response;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -16,7 +17,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
         {
         }
 
-        public async Task<IEnumerable<Team>> FindAsync(FindTeamParams findTeamParams)
+        public async Task<IEnumerable<TeamDTO>> FindAsync(FindTeamParams findTeamParams)
         {
             IQueryable<Team> teamsQuery = _dbContext.Teams;
             if (findTeamParams.League != null)
@@ -26,7 +27,8 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                 teamsQuery = teamsQuery.Where(t => findTeamParams.TeamNames.Contains(t.Name));
 
             
-            return await teamsQuery.ToListAsync();
+            return (await teamsQuery.ToListAsync())
+                        .Select(t => t.ToDto());
         }
 
         public async Task<string> AddAsync(PostTeamRequest postTeamRequest)

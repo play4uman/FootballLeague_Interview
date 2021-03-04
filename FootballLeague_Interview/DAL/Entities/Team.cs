@@ -1,4 +1,5 @@
 ﻿using FootballLeague_Interview.Shared.DTO.Request;
+using FootballLeague_Interview.Shared.DTO.Response;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -44,6 +45,15 @@ namespace FootballLeague_Interview.DAL.Entities
             {
                 Name = postTeamRequest.Name,
                 DomesticLeagueName = postTeamRequest.LeagueName
+            };
+        }
+
+        public TeamDTO ToDto()
+        {
+            return new TeamDTO
+            {
+                Name = this.Name,
+                LeagueName = DomesticLeagueName
             };
         }
     }

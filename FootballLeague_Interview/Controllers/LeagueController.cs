@@ -1,5 +1,7 @@
 ﻿using FootballLeague_Interview.DAL.DataServices.Abstractions;
+using FootballLeague_Interview.DAL.DataServices.FindParameters;
 using FootballLeague_Interview.Shared.DTO.Request;
+using FootballLeague_Interview.Shared.DTO.Response;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -18,6 +20,26 @@ namespace FootballLeague_Interview.Controllers
         }
 
         private readonly ILeagueService _leagueService;
+
+        [HttpGet]
+        public async Task<ActionResult<LeagueDTO>> GetLeagues(string country, [FromQuery] string[] leagueNames)
+        {
+            try
+            {
+                var result = await _leagueService.FindAsync(new FindLeagueParams
+                {
+                    Country = country,
+                    LeagueNames = leagueNames.Any() ? leagueNames : null
+                });
+
+                return Ok(result);
+            }
+            catch (ArgumentException aEx)
+            {
+                return NotFound(aEx.Message);
+            }
+        }
+
 
         [HttpPost("create")]
         public async Task<ActionResult<string>> PostTeam(PostLeagueRequest postLeagueRequest)
