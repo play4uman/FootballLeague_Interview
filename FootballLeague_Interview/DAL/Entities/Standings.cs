@@ -26,6 +26,8 @@ namespace FootballLeague_Interview.DAL.Entities
                 Season = SeasonId,
                 Rows = StandingRows.Select(sr => new StandingsRowDTO
                 {
+                    LeagueName = League.Name,
+                    Season = SeasonId,
                     TeamName = sr.Team.Name,
                     Played = sr.Played,
                     Wins = sr.Wins,

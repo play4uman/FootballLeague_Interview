@@ -55,7 +55,7 @@ namespace FootballLeague_Interview.Controllers
                 {
                     var result = await _resultService.AddAsync(postResultRequest);
 
-                    return Ok(result);
+                    return Created(result.url, result.createdDto);
                 }
                 catch (ArgumentException aEx)
                 {

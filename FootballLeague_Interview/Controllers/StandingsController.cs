@@ -48,7 +48,7 @@ namespace FootballLeague_Interview.Controllers
             {
                 var result = await _standingsService.InitiateAsync(initiateStandingsRequest);
 
-                return Ok(result);
+                return Created(result.url, result.createdDto);
             }
             catch (ArgumentException aEx)
             {
@@ -64,7 +64,7 @@ namespace FootballLeague_Interview.Controllers
             {
                 var result = await _standingsService.UpdateMatchAsync(resultDTO, shouldRollback);
 
-                return Ok(result);
+                return Ok(result.updatedDto);
             }
             catch (ArgumentException aEx)
             {

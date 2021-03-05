@@ -42,7 +42,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                 .Select(s => s.ToDto());
         }
 
-        public async Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest)
+        public async Task<(string url, StandingsDTO createdDto)> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest)
         {
             var newSeason = Season.FromISOString(initiateStandingsRequest.Season);
 
@@ -70,7 +70,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             _dbContext.Standings.Add(newStandings);
             await _dbContext.SaveChangesAsync();
 
-            return "todo: generate URL";
+            return ("todo: generate URL", newStandings.ToDto());
         }
 
         public async Task DeleteAsync((string leagueName, string season) deleteParams)
@@ -110,18 +110,19 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
         // Use this method when a result has been added and we want to update the rows for the two participating teams automatically
 
-        public async Task<string> UpdateMatchAsync(ResultDTO resultDTO, bool rollback)
+        public async Task<(string url, StandingsDTO updatedDto)> UpdateMatchAsync(ResultDTO resultDTO, bool rollback)
         {
             var seasonId = Season.FromISOString(resultDTO.Season).FullName;
             var standingsEntity = await _dbContext.Standings
                                             .Include(s => s.StandingRows)
+                                                .ThenInclude(r => r.Team)
                                             .SingleOrDefaultAsync(s => s.SeasonId == seasonId && s.LeagueId == resultDTO.LeagueName);
             var points = GetPoints(resultDTO.Winner);
             UpdateSingleRowAfterAMatch(resultDTO.HomeTeamName, resultDTO.GoalsScoredByHomeTeam, resultDTO.GoalsScoredByAwayTeam, points.homeTeamPoints, standingsEntity, rollback);
             UpdateSingleRowAfterAMatch(resultDTO.AwayTeamName, resultDTO.GoalsScoredByAwayTeam, resultDTO.GoalsScoredByHomeTeam, points.awayTeamPoints, standingsEntity, rollback);
 
             await _dbContext.SaveChangesAsync();
-            return "todo: generate URL";
+            return ("todo: generate URL", standingsEntity.ToDto());
         }
 
         private void UpdateSingleRowAfterAMatch(string teamName, int goalsScored, int goalsConceded, int pointsToAdd, 

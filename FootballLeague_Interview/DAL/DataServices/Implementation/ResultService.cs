@@ -41,14 +41,14 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             return (await resultsQuery.ToArrayAsync()).Select(r => r.ToDto());
         }
 
-        public async Task<string> AddAsync(PostResultRequest toAdd)
+        public async Task<(string, ResultDTO)> AddAsync(PostResultRequest toAdd)
         {
             var result = await ValidateAndGenerateResultAsync(toAdd);
             var resultAsDto = result.ToDto();
 
 
             await _standingsService.UpdateMatchAsync(resultAsDto, false);
-            return "todo: generate URL";
+            return ("todo: generate URL", resultAsDto);
         }
 
         private async Task<Result> ValidateAndGenerateResultAsync(PostResultRequest toAdd)

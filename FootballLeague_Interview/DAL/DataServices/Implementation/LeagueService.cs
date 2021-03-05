@@ -32,26 +32,26 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                         .Select(t => t.ToDto());
         }
 
-        public async Task<string> AddAsync(PostLeagueRequest postLeagueRequest)
+        public async Task<(string, LeagueDTO)> AddAsync(PostLeagueRequest postLeagueRequest)
         {
-            var newLeague = DomesticLeague.FromRequest(postLeagueRequest);
+            var leagueEntity = DomesticLeague.FromRequest(postLeagueRequest);
             var initialTeamsAsRequests = (postLeagueRequest.InitialTeams ?? Enumerable.Empty<string>())
                                             .Select(it => new PostTeamRequest
                                             {
                                                 LeagueName = postLeagueRequest.LeagueName,
                                                 Name = it
                                             });
-            newLeague.Teams = new List<Team>();
+            leagueEntity.Teams = new List<Team>();
             foreach (var postTeamRequest in initialTeamsAsRequests) 
             {
                 var newTeam = Team.FromRequest(postTeamRequest);
-                newLeague.Teams.Add(newTeam);
+                leagueEntity.Teams.Add(newTeam);
             }
 
-            _dbContext.Leagues.Add(newLeague);
+            _dbContext.Leagues.Add(leagueEntity);
             await _dbContext.SaveChangesAsync();
 
-            return "todo: generate URL";
+            return ("todo: generate URL", leagueEntity.ToDto());
         }
 
         public async Task DeleteAsync(string id)

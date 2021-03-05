@@ -21,8 +21,16 @@ namespace FootballLeague_Interview.Controllers
 
         private readonly ILeagueService _leagueService;
 
+        /// <summary>
+        /// Retrieves a list of League objects
+        /// </summary>
+        /// <param name="country">Filter Leagues based on country name</param>
+        /// <param name="leagueNames">Find only Leagues whose names are contained in this list</param>
+        /// <response code="200">Query is valid. The resulting collection may be empty though</response>
+        /// <response code="400">Cannot find league with the given parameters</response>
+
         [HttpGet]
-        public async Task<ActionResult<LeagueDTO>> GetLeagues(string country, [FromQuery] string[] leagueNames)
+        public async Task<ActionResult<IEnumerable<LeagueDTO>>> GetLeagues(string country, [FromQuery] string[] leagueNames)
         {
             try
             {
@@ -40,15 +48,22 @@ namespace FootballLeague_Interview.Controllers
             }
         }
 
+        /// <summary>
+        /// Create a new League object
+        /// </summary>
+        /// <param name="postLeagueRequest">Request used for creating the League object</param>
+        /// <response code="200">Query is valid. The resulting collection may be empty though</response>
+        /// <response code="400">Cannot find league with the given parameters</response>
+
 
         [HttpPost("create")]
-        public async Task<ActionResult<string>> PostLeague(PostLeagueRequest postLeagueRequest)
+        public async Task<ActionResult> PostLeague(PostLeagueRequest postLeagueRequest)
         {
             try
             {
                 var result = await _leagueService.AddAsync(postLeagueRequest);
 
-                return Ok(result);
+                return Created(result.url, result.createdDto);
             }
             catch (ArgumentException aEx)
             {

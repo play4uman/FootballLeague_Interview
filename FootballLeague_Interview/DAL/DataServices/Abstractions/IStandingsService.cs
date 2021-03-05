@@ -13,8 +13,8 @@ namespace FootballLeague_Interview.DAL.DataServices.Abstractions
     public interface IStandingsService : ICanFindEntity<StandingsDTO, FindStandingsParams>, 
         ICanUpdateEntity<StandingsRowDTO>, ICanDeleteEntity<(string leagueName, string season)>
     {
-        Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest);
-        Task<string> UpdateMatchAsync(ResultDTO resultDTO, bool rollback);
+        Task<(string url, StandingsDTO createdDto)> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest);
+        Task<(string url, StandingsDTO updatedDto)> UpdateMatchAsync(ResultDTO resultDTO, bool rollback);
 
     }
 }

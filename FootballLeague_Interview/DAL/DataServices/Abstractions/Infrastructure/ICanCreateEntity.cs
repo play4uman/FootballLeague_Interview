@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace FootballLeague_Interview.DAL.DataServices.Abstractions.Infrastructure
 {
-    public interface ICanCreateEntity<TAddRequest>
+    public interface ICanCreateEntity<TAddRequest, TDto>
     {
-        Task<string> AddAsync(TAddRequest toAdd);
+        Task<(string url, TDto createdDto)> AddAsync(TAddRequest toAdd);
     }
 }

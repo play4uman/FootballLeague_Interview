@@ -44,13 +44,13 @@ namespace FootballLeague_Interview.Controllers
         }
 
         [HttpPost("create")]
-        public async Task<ActionResult<string>> PostTeam(PostTeamRequest postTeamRequest)
+        public async Task<ActionResult> PostTeam(PostTeamRequest postTeamRequest)
         {
             try
             {
                 var result = await _teamService.AddAsync(postTeamRequest);
 
-                return Ok(result);
+                return Created(result.url, result.createdDto);
             }
             catch (ArgumentException aEx)
             {

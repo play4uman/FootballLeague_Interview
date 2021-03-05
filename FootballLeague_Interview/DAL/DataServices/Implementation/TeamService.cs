@@ -31,7 +31,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                         .Select(t => t.ToDto());
         }
 
-        public async Task<string> AddAsync(PostTeamRequest postTeamRequest)
+        public async Task<(string, TeamDTO)> AddAsync(PostTeamRequest postTeamRequest)
         {
             var toAddEntity = Team.FromRequest(postTeamRequest);
             bool alreadyExists = (await _dbContext.Teams.FindAsync(toAddEntity.Id)) != null;
@@ -40,7 +40,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
             _dbContext.Teams.Add(toAddEntity);
             await _dbContext.SaveChangesAsync();
-            return "todo: URL";
+            return ("todo: generate URL", toAddEntity.ToDto());
         }
 
         public async Task DeleteAsync((string teamName, string leagueName) id)

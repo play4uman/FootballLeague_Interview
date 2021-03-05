@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>FootballLeague_Interview</name>
+    </assembly>
+    <members>
+        <member name="M:FootballLeague_Interview.Controllers.LeagueController.GetLeagues(System.String,System.String[])">
+            <summary>
+            Retrieves a list of League objects
+            </summary>
+            <param name="country">Filter Leagues based on country name</param>
+            <param name="leagueNames">Find only Leagues whose names are contained in this list</param>
+            <response code="200">Query is valid. The resulting collection may be empty though</response>
+            <response code="400">Cannot find league with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.LeagueController.PostLeague(FootballLeague_Interview.Shared.DTO.Request.PostLeagueRequest)">
+            <summary>
+            Create a new League object
+            </summary>
+            <param name="postLeagueRequest">Request used for creating the League object</param>
+            <response code="200">Query is valid. The resulting collection may be empty though</response>
+            <response code="400">Cannot find league with the given parameters</response>
+        </member>
+    </members>
+</doc>

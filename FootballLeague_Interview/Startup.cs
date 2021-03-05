@@ -11,10 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-
+using System.IO;
 
 namespace FootballLeague_Interview
 {
+#pragma warning disable CS1591
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -33,6 +34,9 @@ namespace FootballLeague_Interview
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "FootballLeague_Interview", Version = "v1" });
+
+                var filePath = Path.Combine(System.AppContext.BaseDirectory, "FootballLeague_Interview.xml");
+                c.IncludeXmlComments(filePath);
             });
 
             services.AddTransient<ITeamService, TeamService>();
