@@ -48,6 +48,7 @@ namespace FootballLeague_Interview.DAL.Entities
         {
             return new Team
             {
+                Id = GetIdFromNameAndLeague(postTeamRequest.Name, postTeamRequest.LeagueName),
                 Name = postTeamRequest.Name,
                 DomesticLeagueName = postTeamRequest.LeagueName
             };

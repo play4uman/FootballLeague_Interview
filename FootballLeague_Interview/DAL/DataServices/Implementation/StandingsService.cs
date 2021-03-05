@@ -93,7 +93,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             if (standingsEntity == null)
                 throw new ArgumentException("No standings for this row exist");
 
-            var rowEntity = standingsEntity.StandingRows.FirstOrDefault(r => r.Team.Name.Equals(toUpdate.TeamName, StringComparison.OrdinalIgnoreCase));
+            var rowEntity = standingsEntity.StandingRows.FirstOrDefault(r => r.Team.Name.Equals(toUpdate.TeamName));
             if (rowEntity == null)
                 throw new ArgumentException("No row with such a team exists");
 

@@ -22,7 +22,8 @@ namespace FootballLeague_Interview.DAL.Entities
         {
             return new DomesticLeague
             {
-                Name = postLeagueRequest.LeagueName
+                Name = postLeagueRequest.LeagueName,
+                Country = postLeagueRequest.Country
             };
         }
 

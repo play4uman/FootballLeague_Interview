@@ -21,7 +21,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
         {
             IQueryable<Team> teamsQuery = _dbContext.Teams;
             if (findTeamParams.League != null)
-                teamsQuery = teamsQuery.Where(t => t.DomesticLeagueName.Equals(findTeamParams.League, StringComparison.OrdinalIgnoreCase));
+                teamsQuery = teamsQuery.Where(t => t.DomesticLeagueName.Equals(findTeamParams.League));
 
             if (findTeamParams.TeamNames != null)
                 teamsQuery = teamsQuery.Where(t => findTeamParams.TeamNames.Contains(t.Name));

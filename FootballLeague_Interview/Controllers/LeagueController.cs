@@ -42,13 +42,42 @@ namespace FootballLeague_Interview.Controllers
 
 
         [HttpPost("create")]
-        public async Task<ActionResult<string>> PostTeam(PostLeagueRequest postLeagueRequest)
+        public async Task<ActionResult<string>> PostLeague(PostLeagueRequest postLeagueRequest)
         {
             try
             {
                 var result = await _leagueService.AddAsync(postLeagueRequest);
 
                 return Ok(result);
+            }
+            catch (ArgumentException aEx)
+            {
+                return BadRequest(aEx.Message);
+            }
+        }
+
+
+        [HttpPost("update/{league}")]
+        public async Task<ActionResult> UpdateTeam([FromQuery] string league, [FromBody] UpdateLeagueRequest updateLeagueRequest)
+        {
+            try
+            {
+                var result = await _leagueService.UpdateAsync((league, updateLeagueRequest));
+                return Ok(result);
+            }
+            catch (ArgumentException aEx)
+            {
+                return BadRequest(aEx.Message);
+            }
+        }
+
+        [HttpDelete("{league}")]
+        public async Task<ActionResult> DeleteTeam(string leagueId)
+        {
+            try
+            {
+                await _leagueService.DeleteAsync(leagueId);
+                return Ok();
             }
             catch (ArgumentException aEx)
             {

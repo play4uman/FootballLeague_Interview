@@ -7,6 +7,7 @@ namespace FootballLeague_Interview.Shared.DTO.Request
     public class PostLeagueRequest
     {
         public string LeagueName { get; set; }
+        public string Country { get; set; }
         public string[] InitialTeams { get; set; }
     }
 }

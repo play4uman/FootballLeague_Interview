@@ -26,9 +26,9 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                                         .Include(r => r.HomeTeam)
                                         .Include(r => r.AwayTeam)
                                         .Where(r => r.SeasonId == findTeamParams.Season
-                                            && r.LeagueId.Equals(findTeamParams.LeagueName, StringComparison.OrdinalIgnoreCase)
-                                            && r.HomeTeam.Name.Equals(findTeamParams.HomeTeamName, StringComparison.OrdinalIgnoreCase)
-                                            && r.AwayTeam.Name.Equals(findTeamParams.AwayTeamName, StringComparison.OrdinalIgnoreCase))
+                                            && r.LeagueId.Equals(findTeamParams.LeagueName)
+                                            && r.HomeTeam.Name.Equals(findTeamParams.HomeTeamName)
+                                            && r.AwayTeam.Name.Equals(findTeamParams.AwayTeamName))
                                         .ToArrayAsync())
                                         .Select(r => r.ToDto());
 
@@ -58,9 +58,9 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                 throw new ArgumentException("Can't add the given result as there is no such standing that corresponds to this combination of year/league");
 
             var homeTeamEntity = standing.League.Teams.FirstOrDefault(
-                    t => t.Name.Equals(toAdd.HomeTeamName, StringComparison.OrdinalIgnoreCase));
+                    t => t.Name.Equals(toAdd.HomeTeamName));
             var awayTeamEntity = standing.League.Teams.FirstOrDefault(
-                    t => t.Name.Equals(toAdd.AwayTeamName, StringComparison.OrdinalIgnoreCase));
+                    t => t.Name.Equals(toAdd.AwayTeamName));
 
             if (homeTeamEntity == null || awayTeamEntity == null)
                 throw new ArgumentException("One of the teams, part of this result, does not exist");
@@ -81,16 +81,16 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                     .ThenInclude(r => r.HomeTeam)
                 .Include(s => s.ResultsDuringTheSeason)
                     .ThenInclude(r => r.AwayTeam)
-                .SingleOrDefaultAsync(r => r.SeasonId.Equals(deleteResultRequest.Season, StringComparison.OrdinalIgnoreCase) 
-                    && r.LeagueId.Equals(deleteResultRequest.LeagueName, StringComparison.OrdinalIgnoreCase));
+                .SingleOrDefaultAsync(r => r.SeasonId.Equals(deleteResultRequest.Season) 
+                    && r.LeagueId.Equals(deleteResultRequest.LeagueName));
 
             if (standingsEntity == null)
                 throw new ArgumentException($"There are no recorded results for league {deleteResultRequest.LeagueName} " +
                     $"at season {deleteResultRequest.Season}");
 
             var resultEntity = standingsEntity.ResultsDuringTheSeason
-                .FirstOrDefault(r => r.HomeTeam.Name.Equals(homeTeamName, StringComparison.OrdinalIgnoreCase) &&
-                                        r.AwayTeam.Name.Equals(awayTeamName, StringComparison.OrdinalIgnoreCase));
+                .FirstOrDefault(r => r.HomeTeam.Name.Equals(homeTeamName) &&
+                                        r.AwayTeam.Name.Equals(awayTeamName));
             if (resultEntity == null)
                 throw new ArgumentException($"No match between {homeTeamName} and {awayTeamName}" +
                     $" has been played that season");
