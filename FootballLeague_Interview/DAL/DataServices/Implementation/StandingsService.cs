@@ -22,6 +22,26 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
         public const int PointsForDraw = 1;
         public const int PointsForLoss = 0;
 
+        public async Task<IEnumerable<StandingsDTO>> FindAsync(FindStandingsParams findTeamParams)
+        {
+            IQueryable<Standings> standingsQuery = _dbContext.Standings
+                                                    .Include(s => s.League)
+                                                    .Include(s => s.StandingRows)
+                                                        .ThenInclude(r => r.Team);
+
+            if (findTeamParams.LeagueName != null)
+                standingsQuery = standingsQuery.Where(s => s.LeagueId == findTeamParams.LeagueName);
+
+            if (findTeamParams.Season != null)
+            {
+                var toSearch = Season.FromISOString(findTeamParams.Season);
+                standingsQuery = standingsQuery.Where(s => s.SeasonId == toSearch.FullName);
+            }
+
+            return (await standingsQuery.ToListAsync())
+                .Select(s => s.ToDto());
+        }
+
         public async Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest)
         {
             var newSeason = Season.FromISOString(initiateStandingsRequest.Season);
@@ -52,25 +72,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
             return "todo: generate URL";
         }
-        public async Task<IEnumerable<StandingsDTO>> FindAsync(FindStandingsParams findTeamParams)
-        {
-            IQueryable<Standings> standingsQuery = _dbContext.Standings
-                                                    .Include(s => s.League)
-                                                    .Include(s => s.StandingRows)
-                                                        .ThenInclude(r => r.Team);
-            
-            if (findTeamParams.LeagueName != null)
-                standingsQuery = standingsQuery.Where(s => s.LeagueId == findTeamParams.LeagueName);
 
-            if (findTeamParams.Season != null)
-            {
-                var toSearch = Season.FromISOString(findTeamParams.Season);
-                standingsQuery = standingsQuery.Where(s => s.SeasonId == toSearch.FullName);
-            }
-
-            return (await standingsQuery.ToListAsync())
-                .Select(s => s.ToDto());
-        }
         public async Task DeleteAsync((string leagueName, string season) deleteParams)
         {
             var seasonId = Season.FromISOString(deleteParams.season).FullName;

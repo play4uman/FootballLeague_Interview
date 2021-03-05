@@ -17,6 +17,21 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
         {
         }
 
+        public async Task<IEnumerable<LeagueDTO>> FindAsync(FindLeagueParams findLeagueParams)
+        {
+            IQueryable<DomesticLeague> leaguesQuery = _dbContext.Leagues
+                                                        .Include(l => l.Teams);
+            if (findLeagueParams.Country != null)
+                leaguesQuery = leaguesQuery.Where(t => t.Country.Equals(findLeagueParams.Country));
+
+            if (findLeagueParams.LeagueNames != null)
+                leaguesQuery = leaguesQuery.Where(t => findLeagueParams.LeagueNames.Contains(t.Name));
+
+
+            return (await leaguesQuery.ToListAsync())
+                        .Select(t => t.ToDto());
+        }
+
         public async Task<string> AddAsync(PostLeagueRequest postLeagueRequest)
         {
             var newLeague = DomesticLeague.FromRequest(postLeagueRequest);
@@ -49,20 +64,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<LeagueDTO>> FindAsync(FindLeagueParams findLeagueParams)
-        {
-            IQueryable<DomesticLeague> leaguesQuery = _dbContext.Leagues
-                                                        .Include(l => l.Teams);
-            if (findLeagueParams.Country != null)
-                leaguesQuery = leaguesQuery.Where(t => t.Country.Equals(findLeagueParams.Country));
 
-            if (findLeagueParams.LeagueNames != null)
-                leaguesQuery = leaguesQuery.Where(t => findLeagueParams.LeagueNames.Contains(t.Name));
-
-
-            return (await leaguesQuery.ToListAsync())
-                        .Select(t => t.ToDto());
-        }
 
         public async Task<string> UpdateAsync((string leagueName, UpdateLeagueRequest updateLeagueRequest) updateArgs)
         {

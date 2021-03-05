@@ -5,6 +5,7 @@ using FootballLeague_Interview.Shared.DTO.Response;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -55,6 +56,52 @@ namespace FootballLeague_Interview.Controllers
             }
         }
 
+        [HttpPost("update/match")]
+        public async Task<ActionResult> UpdateStandingsWithMatch(ResultDTO resultDTO, [FromQuery]bool? rollback)
+        {
+            bool shouldRollback = rollback.HasValue && rollback.Value;
+            try
+            {
+                var result = await _standingsService.UpdateMatchAsync(resultDTO, shouldRollback);
+
+                return Ok(result);
+            }
+            catch (ArgumentException aEx)
+            {
+                return BadRequest(aEx.Message);
+            }
+        }
+
+        [HttpPost("update")]
+        public async Task<ActionResult> UpdateStandingsRow(StandingsRowDTO standingsRowDTO)
+        {
+            try
+            {
+                var result = await _standingsService.UpdateAsync(standingsRowDTO);
+
+                return Ok(result);
+            }
+            catch (ArgumentException aEx)
+            {
+                return BadRequest(aEx.Message);
+            }
+        }
+
+        [HttpDelete]
+        public async Task<ActionResult> DeleteStandings(
+            [Required, RegularExpression(@"(\d+)/(\d+)")] string season,
+            [Required] string league)
+        {
+            try
+            {
+                await _standingsService.DeleteAsync((league, season));
+                return Ok();
+            }
+            catch (ArgumentException aEx)
+            {
+                return BadRequest(aEx.Message);
+            }
+        }
 
     }
 }

@@ -22,17 +22,23 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
         public async Task<IEnumerable<ResultDTO>> FindAsync(FindResultParams findTeamParams)
         {
-            var results = (await _dbContext.Results
+            IQueryable<Result> resultsQuery = _dbContext.Results
                                         .Include(r => r.HomeTeam)
-                                        .Include(r => r.AwayTeam)
-                                        .Where(r => r.SeasonId == findTeamParams.Season
-                                            && r.LeagueId.Equals(findTeamParams.LeagueName)
-                                            && r.HomeTeam.Name.Equals(findTeamParams.HomeTeamName)
-                                            && r.AwayTeam.Name.Equals(findTeamParams.AwayTeamName))
-                                        .ToArrayAsync())
-                                        .Select(r => r.ToDto());
+                                        .Include(r => r.AwayTeam);
 
-            return results;
+            if (findTeamParams.Season != null)
+                resultsQuery = resultsQuery.Where(r => r.SeasonId == findTeamParams.Season);
+
+            if (findTeamParams.LeagueName != null)
+                resultsQuery = resultsQuery.Where(r => r.LeagueId == findTeamParams.LeagueName);
+
+            if (findTeamParams.HomeTeamName != null)
+                resultsQuery = resultsQuery.Where(r => r.HomeTeam.Name == findTeamParams.HomeTeamName);
+
+            if (findTeamParams.AwayTeamName != null)
+                resultsQuery = resultsQuery.Where(r => r.AwayTeam.Name == findTeamParams.AwayTeamName);
+
+            return (await resultsQuery.ToArrayAsync()).Select(r => r.ToDto());
         }
 
         public async Task<string> AddAsync(PostResultRequest toAdd)
