@@ -21,7 +21,7 @@ namespace FootballLeague_Interview.DAL.Entities
             get
             {
                 if (id == null)
-                    id = $"{Name}{LeagueNameDelimeter}{DomesticLeagueName}";
+                    id = GetIdFromNameAndLeague(Name, DomesticLeagueName);
                 return id;
             }
             set
@@ -39,6 +39,11 @@ namespace FootballLeague_Interview.DAL.Entities
         public ICollection<Result> HomeResults { get; set; }
         public ICollection<Result> AwayResults { get; set; }
 
+        public static string GetIdFromNameAndLeague(string teamName, string leagueName)
+        {
+            return $"{teamName}{LeagueNameDelimeter}{leagueName}";
+        }
+        
         public static Team FromRequest(PostTeamRequest postTeamRequest)
         {
             return new Team

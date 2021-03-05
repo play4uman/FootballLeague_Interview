@@ -6,6 +6,8 @@ namespace FootballLeague_Interview.Shared.DTO.Response
 {
     public class StandingsRowDTO
     {
+        public string LeagueName { get; set; }
+        public string Season { get; set; }
         public string TeamName { get; set; }
         public int Played { get; set; }
         public int Wins { get; set; }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FootballLeague_Interview.Shared.DTO.Response;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -57,6 +58,22 @@ namespace FootballLeague_Interview.DAL.Entities
                 GoalsScored = 0,
                 GoalsConceded = 0,
                 Points = 0,
+            };
+        }
+
+        public static StandingRow FromDto(StandingsRowDTO dto)
+        {
+            return new StandingRow
+            {
+                Id = Guid.NewGuid(),
+                TeamId = dto.TeamName,
+                Played = dto.Played,
+                Wins = dto.Wins,
+                Draws = dto.Draws,
+                Losses = dto.Losses,
+                GoalsScored = dto.GoalsScored,
+                GoalsConceded = dto.GoalsConceded,
+                Points = dto.Points
             };
         }
     }

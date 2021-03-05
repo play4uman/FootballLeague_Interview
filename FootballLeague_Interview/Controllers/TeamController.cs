@@ -14,9 +14,9 @@ namespace FootballLeague_Interview.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class TeamsController : ControllerBase
+    public class TeamController : ControllerBase
     {
-        public TeamsController(ITeamService teamService)
+        public TeamController(ITeamService teamService)
         {
             _teamService = teamService;
         }

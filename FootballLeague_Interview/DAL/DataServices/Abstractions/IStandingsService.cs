@@ -1,5 +1,6 @@
 ﻿using FootballLeague_Interview.DAL.DataServices.Abstractions.Infrastructure;
 using FootballLeague_Interview.DAL.DataServices.FindParameters;
+using FootballLeague_Interview.DAL.Entities;
 using FootballLeague_Interview.Shared.DTO.Request;
 using FootballLeague_Interview.Shared.DTO.Response;
 using System;
@@ -12,6 +13,8 @@ namespace FootballLeague_Interview.DAL.DataServices.Abstractions
     public interface IStandingsService : ICanFindEntity<StandingsDTO, FindStandingsParams>, 
         ICanUpdateEntity<StandingsRowDTO>, ICanDeleteEntity
     {
-        public Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest);
+        Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest);
+        Task<string> UpdateMatchAsync(ResultDTO resultDTO);
+
     }
 }

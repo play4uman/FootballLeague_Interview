@@ -18,6 +18,10 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
         {
         }
 
+        public const int PointsForWin = 3;
+        public const int PointsForDraw = 1;
+        public const int PointsForLoss = 0;
+
         public async Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest)
         {
             var newSeason = Season.FromISOString(initiateStandingsRequest.Season);
@@ -72,11 +76,84 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             throw new NotImplementedException();
         }
 
-        public Task<string> UpdateAsync(StandingsRowDTO toUpdate)
+        // Use this method when there's an error with a given row and you want to change the row manually.
+        public async Task<string> UpdateAsync(StandingsRowDTO toUpdate)
         {
-            throw new NotImplementedException();
+            var seasonId = Season.FromISOString(toUpdate.Season).FullName;
+            var standingsEntity = await _dbContext.Standings
+                .Include(s => s.StandingRows)
+                    .ThenInclude(r => r.Team)
+                .SingleOrDefaultAsync(r => r.SeasonId == seasonId && r.LeagueId == toUpdate.LeagueName);
+            if (standingsEntity == null)
+                throw new ArgumentException("No standings for this row exist");
+
+            var rowEntity = standingsEntity.StandingRows.FirstOrDefault(r => r.Team.Name.Equals(toUpdate.TeamName, StringComparison.OrdinalIgnoreCase));
+            if (rowEntity == null)
+                throw new ArgumentException("No row with such a team exists");
+
+            var id = rowEntity.Id;
+            var newRow = StandingRow.FromDto(toUpdate);
+            _dbContext.Entry(rowEntity).CurrentValues.SetValues(newRow);
+            rowEntity.Id = id;
+
+            await _dbContext.SaveChangesAsync();
+            return "todo: generate URL";
         }
 
+        // Use this method when a result has been added and we want to update the rows for the two participating teams automatically
 
+        public async Task<string> UpdateMatchAsync(ResultDTO resultDTO)
+        {
+            var seasonId = Season.FromISOString(resultDTO.Season).FullName;
+            var standingsEntity = await _dbContext.Standings
+                                            .Include(s => s.StandingRows)
+                                            .SingleOrDefaultAsync(s => s.SeasonId == seasonId && s.LeagueId == resultDTO.LeagueName);
+            var points = GetPoints(resultDTO.Winner);
+            UpdateSingleRowAfterAMatch(resultDTO.HomeTeamName, resultDTO.GoalsScoredByHomeTeam, resultDTO.GoalsScoredByAwayTeam, points.homeTeamPoints, standingsEntity);
+            UpdateSingleRowAfterAMatch(resultDTO.AwayTeamName, resultDTO.GoalsScoredByAwayTeam, resultDTO.GoalsScoredByHomeTeam, points.awayTeamPoints, standingsEntity);
+
+            await _dbContext.SaveChangesAsync();
+            return "todo: generate URL";
+        }
+
+        private void UpdateSingleRowAfterAMatch(string teamName, int goalsScored, int goalsConceded, int pointsToAdd, 
+            Standings standings)
+        {
+            var teamId = Team.GetIdFromNameAndLeague(teamName, standings.LeagueId);
+            var rowEntity = standings.StandingRows.FirstOrDefault(r => r.TeamId == teamId);
+            if (rowEntity == null)
+                throw new ArgumentException($"Cannot update row in standings as the team {teamName} does not have an associated row." +
+                    $"Did you forget to initiate the standings?");
+
+            rowEntity.GoalsScored += goalsScored;
+            rowEntity.GoalsConceded += goalsConceded;
+            rowEntity.Points += pointsToAdd;
+
+            bool wasDraw = pointsToAdd == PointsForDraw;
+            bool wasWinner = pointsToAdd == PointsForWin;
+            bool wasLoser = pointsToAdd == PointsForLoss;
+
+            rowEntity.Wins += wasWinner ? 1 : 0;
+            rowEntity.Draws += wasDraw ? 1 : 0;
+            rowEntity.Losses += wasLoser ? 1 : 0;
+        }
+
+        private (int homeTeamPoints, int awayTeamPoints) GetPoints(Winner matchWinner)
+        {
+            int pointsForHomeTeam;
+            int pointsForAwayTeam;
+            if (matchWinner == Winner.Draw)
+            {
+                pointsForHomeTeam = PointsForDraw;
+                pointsForAwayTeam = PointsForDraw;
+            }
+            else
+            {
+                pointsForHomeTeam = matchWinner == Winner.Home ? PointsForWin : PointsForLoss;
+                pointsForAwayTeam = matchWinner == Winner.Away ? PointsForWin : PointsForLoss;
+            }
+
+            return (pointsForHomeTeam, pointsForAwayTeam);
+        }
     }
 }

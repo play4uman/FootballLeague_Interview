@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace FootballLeague_Interview.DAL.DataServices.Abstractions
 {
     public interface ITeamService : ICanFindEntity<TeamDTO, FindTeamParams>, 
-        ICanAddEntity<PostTeamRequest>, ICanUpdateEntity<Team>, ICanDeleteEntity
+        ICanCreateEntity<PostTeamRequest>, ICanUpdateEntity<Team>, ICanDeleteEntity
     {
     }
 }

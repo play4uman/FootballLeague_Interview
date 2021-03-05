@@ -1,4 +1,5 @@
 ﻿using FootballLeague_Interview.Shared.DTO.Request;
+using FootballLeague_Interview.Shared.DTO.Response;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -58,13 +59,37 @@ namespace FootballLeague_Interview.DAL.Entities
             {
                 SeasonId = postResultRequest.Season,
                 LeagueId = postResultRequest.LeagueName,
-                HomeTeamId = postResultRequest.HomeTeamName,
-                AwayTeamId = postResultRequest.AwayTeamName,
+                HomeTeamId = Team.GetIdFromNameAndLeague(postResultRequest.HomeTeamName, postResultRequest.LeagueName),
+                AwayTeamId = Team.GetIdFromNameAndLeague(postResultRequest.AwayTeamName, postResultRequest.LeagueName),
                 GoalsScoredHomeTeam = postResultRequest.GoalsScoredByHomeTeam,
                 GoalsScoredAwayTeam = postResultRequest.GoalsScoredByAwayTeam,
             };
 
             return result;
+        }
+
+        public ResultDTO ToDto()
+        {
+            return new ResultDTO
+            {
+                Season = SeasonId,
+                LeagueName = LeagueId,
+                HomeTeamName = HomeTeam?.Name,
+                AwayTeamName = AwayTeam?.Name,
+                GoalsScoredByAwayTeam = GoalsScoredAwayTeam,
+                GoalsScoredByHomeTeam = GoalsScoredHomeTeam,
+                Winner = GetDtoWinner()
+            };
+        }
+
+        private Winner GetDtoWinner()
+        {
+            if (Winner == null)
+                return Shared.DTO.Response.Winner.Draw;
+            else if (Winner.Name == HomeTeam.Name)
+                return Shared.DTO.Response.Winner.Home;
+            else
+                return Shared.DTO.Response.Winner.Away;
         }
     }
 }
