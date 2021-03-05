@@ -101,8 +101,22 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
                 var teamEntity = await _dbContext.Teams
                         .SingleOrDefaultAsync(t => t.Name == teamToAddName  && t.DomesticLeagueName == leagueEntity.Name);
-                if (teamEntity == null && shouldAlreadyExist)
-                    throw new ArgumentException($"The team {teamToAddName} listed in {addedOrRemovedExceptionMessage} teams does not exist");
+                
+                if (teamEntity == null) // the team in the request doesn't exist in the database
+                {
+                    if (shouldAlreadyExist) // if it's requested to remove a team that doesn't exist - throw error
+                    { 
+                        throw new ArgumentException($"The team {teamToAddName} listed in {addedOrRemovedExceptionMessage} teams does not exist");
+                    }
+                    else // we need to add the requested team to the database
+                    {
+                        teamEntity = new Team
+                        {
+                            Id = Team.GetIdFromNameAndLeague(teamToAddName, leagueEntity.Name),
+                            Name = teamToAddName
+                        };
+                    }  
+                }
 
                 if (add)
                     leagueEntity.Teams.Add(teamEntity);

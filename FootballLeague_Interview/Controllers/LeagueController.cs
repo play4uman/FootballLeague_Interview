@@ -57,12 +57,12 @@ namespace FootballLeague_Interview.Controllers
         }
 
 
-        [HttpPost("update/{league}")]
-        public async Task<ActionResult> UpdateTeam([FromQuery] string league, [FromBody] UpdateLeagueRequest updateLeagueRequest)
+        [HttpPost("update/{name}")]
+        public async Task<ActionResult> UpdateTeam([FromQuery] string name, [FromBody] UpdateLeagueRequest updateLeagueRequest)
         {
             try
             {
-                var result = await _leagueService.UpdateAsync((league, updateLeagueRequest));
+                var result = await _leagueService.UpdateAsync((name, updateLeagueRequest));
                 return Ok(result);
             }
             catch (ArgumentException aEx)
