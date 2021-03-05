@@ -20,9 +20,19 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
 
         private readonly IStandingsService _standingsService;
 
-        public Task<IEnumerable<ResultDTO>> FindAsync(FindResultParams findTeamParams)
+        public async Task<IEnumerable<ResultDTO>> FindAsync(FindResultParams findTeamParams)
         {
-            throw new NotImplementedException();
+            var results = (await _dbContext.Results
+                                        .Include(r => r.HomeTeam)
+                                        .Include(r => r.AwayTeam)
+                                        .Where(r => r.SeasonId == findTeamParams.Season
+                                            && r.LeagueId.Equals(findTeamParams.LeagueName, StringComparison.OrdinalIgnoreCase)
+                                            && r.HomeTeam.Name.Equals(findTeamParams.HomeTeamName, StringComparison.OrdinalIgnoreCase)
+                                            && r.AwayTeam.Name.Equals(findTeamParams.AwayTeamName, StringComparison.OrdinalIgnoreCase))
+                                        .ToArrayAsync())
+                                        .Select(r => r.ToDto());
+
+            return results;
         }
 
         public async Task<string> AddAsync(PostResultRequest toAdd)
@@ -31,7 +41,7 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             var resultAsDto = result.ToDto();
 
 
-            await _standingsService.UpdateMatchAsync(resultAsDto);
+            await _standingsService.UpdateMatchAsync(resultAsDto, false);
             return "todo: generate URL";
         }
 
@@ -61,16 +71,36 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             return entityToAdd;
         }
 
-        public Task DeleteAsync(object id)
+        public async Task DeleteAsync(DeleteResultRequest deleteResultRequest)
         {
-            throw new NotImplementedException();
-        }
+            var homeTeamName = deleteResultRequest.HomeTeamName;
+            var awayTeamName = deleteResultRequest.AwayTeamName;
 
+            var standingsEntity = await _dbContext.Standings
+                .Include(s => s.ResultsDuringTheSeason)
+                    .ThenInclude(r => r.HomeTeam)
+                .Include(s => s.ResultsDuringTheSeason)
+                    .ThenInclude(r => r.AwayTeam)
+                .SingleOrDefaultAsync(r => r.SeasonId.Equals(deleteResultRequest.Season, StringComparison.OrdinalIgnoreCase) 
+                    && r.LeagueId.Equals(deleteResultRequest.LeagueName, StringComparison.OrdinalIgnoreCase));
 
+            if (standingsEntity == null)
+                throw new ArgumentException($"There are no recorded results for league {deleteResultRequest.LeagueName} " +
+                    $"at season {deleteResultRequest.Season}");
 
-        public Task<string> UpdateAsync(ResultDTO toUpdate)
-        {
-            throw new NotImplementedException();
+            var resultEntity = standingsEntity.ResultsDuringTheSeason
+                .FirstOrDefault(r => r.HomeTeam.Name.Equals(homeTeamName, StringComparison.OrdinalIgnoreCase) &&
+                                        r.AwayTeam.Name.Equals(awayTeamName, StringComparison.OrdinalIgnoreCase));
+            if (resultEntity == null)
+                throw new ArgumentException($"No match between {homeTeamName} and {awayTeamName}" +
+                    $" has been played that season");
+
+            _dbContext.Results.Remove(resultEntity);
+
+            await _dbContext.SaveChangesAsync();
+
+            if (deleteResultRequest.RollbackStandings)
+                await _standingsService.UpdateMatchAsync(resultEntity.ToDto(), true);
         }
     }
 }

@@ -43,26 +43,14 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             return "todo: URL";
         }
 
-        public async Task<string> UpdateAsync(Team toUpdate)
+        public async Task DeleteAsync((string teamName, string leagueName) id)
         {
-            var existingEntity = await _dbContext.Teams.FindAsync(toUpdate.Id);
-            bool alreadyExists = existingEntity != null;
-            if (!alreadyExists)
-                throw new ArgumentException($"Team with name {toUpdate.Name} in league {toUpdate.DomesticLeagueName} does not exist");
+            (string teamName, string leagueName) = id;
+            var teamEntity = await _dbContext.Teams.FindAsync(teamName, leagueName);
+            if (teamEntity == null)
+                throw new ArgumentException($"No team named {teamName} in league {leagueName} exists");
 
-            _dbContext.Entry(existingEntity).CurrentValues.SetValues(toUpdate);
-            await _dbContext.SaveChangesAsync();
-            return "todo: URL";
-        }
-
-        public async Task DeleteAsync(object toDeleteId)
-        {
-            var existingEntity = await _dbContext.Teams.FindAsync(toDeleteId);
-            var alreadyExists = existingEntity != null;
-            if(!alreadyExists)
-                throw new ArgumentException($"Team with Id {toDeleteId} does not exist");
-
-            _dbContext.Teams.Remove(existingEntity);
+            _dbContext.Teams.Remove(teamEntity);
             await _dbContext.SaveChangesAsync();
         }
     }

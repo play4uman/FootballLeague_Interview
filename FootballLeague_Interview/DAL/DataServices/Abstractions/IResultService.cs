@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace FootballLeague_Interview.DAL.DataServices.Abstractions
 {
     public interface IResultService : ICanCreateEntity<PostResultRequest>, ICanFindEntity<ResultDTO, FindResultParams>,
-        ICanUpdateEntity<ResultDTO>, ICanDeleteEntity
+        ICanDeleteEntity<DeleteResultRequest>
     {
     }
 }

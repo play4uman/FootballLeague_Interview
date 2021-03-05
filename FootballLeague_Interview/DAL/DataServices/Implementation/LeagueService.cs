@@ -39,9 +39,14 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
             return "todo: generate URL";
         }
 
-        public Task DeleteAsync(object id)
+        public async Task DeleteAsync(string id)
         {
-            throw new NotImplementedException();
+            var leagueEntity = await _dbContext.Leagues.FindAsync(id);
+            if (leagueEntity == null)
+                throw new ArgumentException($"No league named {id} exists");
+
+            _dbContext.Remove(leagueEntity);
+            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<LeagueDTO>> FindAsync(FindLeagueParams findLeagueParams)
@@ -59,9 +64,42 @@ namespace FootballLeague_Interview.DAL.DataServices.Implementation
                         .Select(t => t.ToDto());
         }
 
-        public Task<string> UpdateAsync(DomesticLeague toUpdate)
+        public async Task<string> UpdateAsync((string leagueName, UpdateLeagueRequest updateLeagueRequest) updateArgs)
         {
-            throw new NotImplementedException();
+            (string leagueName, UpdateLeagueRequest updateLeagueRequest) = updateArgs;
+            var leagueEntity = await _dbContext.Leagues
+                                .Include(l => l.Teams)                
+                                .SingleOrDefaultAsync(l => l.Name.Equals(leagueName, StringComparison.OrdinalIgnoreCase));
+            if (leagueEntity == null)
+                throw new ArgumentException("No such league exists");
+
+            if (updateLeagueRequest.Country != null)
+                updateLeagueRequest.Country = updateLeagueRequest.Country;
+
+            if (updateLeagueRequest.AddTeams != null)
+                await AddOrRemoveteams(leagueEntity, updateLeagueRequest.AddTeams, true);
+
+            if (updateLeagueRequest.RemoveTeams != null)
+                await AddOrRemoveteams(leagueEntity, updateLeagueRequest.RemoveTeams, false);
+
+            return "todo: generate URL";
+        }
+
+        private async Task AddOrRemoveteams(DomesticLeague leagueEntity, string[] teamNames, bool add)
+        {
+            string addedOrRemovedExceptionMessage = add ? "Added" : "Removed";
+            foreach (var teamToAddName in teamNames)
+            {
+                bool teamAlreadyExistsInLeague = leagueEntity.Teams.Any(t => t.Name.Equals(teamToAddName, StringComparison.OrdinalIgnoreCase));
+                if (teamAlreadyExistsInLeague)
+                    throw new ArgumentException($"The team {teamToAddName} already exists in league {leagueEntity.Name}");
+
+                var teamEntity = await _dbContext.Teams.FindAsync(leagueEntity.Name, teamToAddName);
+                if (teamEntity == null)
+                    throw new ArgumentException($"The team {teamToAddName} listed in {addedOrRemovedExceptionMessage} teams does not exist");
+
+                leagueEntity.Teams.Add(teamEntity);
+            }
         }
     }
 }

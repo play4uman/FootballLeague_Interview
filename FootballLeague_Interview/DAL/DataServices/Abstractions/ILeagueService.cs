@@ -11,7 +11,8 @@ using System.Threading.Tasks;
 namespace FootballLeague_Interview.DAL.DataServices.Abstractions
 {
     public interface ILeagueService : ICanFindEntity<LeagueDTO, FindLeagueParams>, 
-        ICanCreateEntity<PostLeagueRequest>, ICanUpdateEntity<DomesticLeague>, ICanDeleteEntity
+        ICanCreateEntity<PostLeagueRequest>, ICanUpdateEntity<(string leagueName, UpdateLeagueRequest updateLeagueRequest)>, 
+        ICanDeleteEntity<string>
     {
     }
 }

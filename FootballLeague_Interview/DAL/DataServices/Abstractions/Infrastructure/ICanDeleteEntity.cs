@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace FootballLeague_Interview.DAL.DataServices.Abstractions.Infrastructure
 {
-    public interface ICanDeleteEntity
+    public interface ICanDeleteEntity<TDeleteId>
     {
-        Task DeleteAsync(object id);
+        Task DeleteAsync(TDeleteId id);
     }
 }

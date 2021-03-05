@@ -11,10 +11,10 @@ using System.Threading.Tasks;
 namespace FootballLeague_Interview.DAL.DataServices.Abstractions
 {
     public interface IStandingsService : ICanFindEntity<StandingsDTO, FindStandingsParams>, 
-        ICanUpdateEntity<StandingsRowDTO>, ICanDeleteEntity
+        ICanUpdateEntity<StandingsRowDTO>, ICanDeleteEntity<(string leagueName, string season)>
     {
         Task<string> InitiateAsync(InitiateStandingsRequest initiateStandingsRequest);
-        Task<string> UpdateMatchAsync(ResultDTO resultDTO);
+        Task<string> UpdateMatchAsync(ResultDTO resultDTO, bool rollback);
 
     }
 }

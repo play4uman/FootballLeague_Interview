@@ -34,7 +34,7 @@ namespace FootballLeague_Interview.DAL.Entities
         [Range(1850, 4000)]
         public int YearEndOfSeason { get; set; }
 
-        // ex. isoSeasonName = 2018/2019
+        
         public static Season FromISOString(string isoSeasonName)
         {
             var yearRange = ExtractStartEndYears(isoSeasonName);
@@ -45,6 +45,7 @@ namespace FootballLeague_Interview.DAL.Entities
             };
         }
 
+        // ex. seasonName = 2018/2019
         private static (int seasonStartYear, int seasonEndYear) ExtractStartEndYears(string seasonName)
         {
             var regex = new Regex(@"(\d+)/(\d+)");
