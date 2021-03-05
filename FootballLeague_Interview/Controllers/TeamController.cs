@@ -24,6 +24,14 @@ namespace FootballLeague_Interview.Controllers
 
         private readonly ITeamService _teamService;
 
+        /// <summary>
+        /// Retrieves a list of Team objects
+        /// </summary>
+        /// <param name="league">Filter Teams based on League name</param>
+        /// <param name="teamNames">Find only Teams whose names are contained in this list</param>
+        /// <response code="200">Query is valid. The resulting collection may be empty though</response>
+        /// <response code="400">Cannot find Teams with the given parameters</response>
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TeamDTO>>> GetTeams(string league, [FromQuery]string[] teamNames)
         {
@@ -43,6 +51,13 @@ namespace FootballLeague_Interview.Controllers
             }
         }
 
+        /// <summary>
+        /// Create a new Team object
+        /// </summary>
+        /// <param name="postTeamRequest">Request used for creating the League object</param>
+        /// <response code="201">Team has been created</response>
+        /// <response code="400">Cannot create Team from the given request</response>
+
         [HttpPost("create")]
         public async Task<ActionResult> PostTeam(PostTeamRequest postTeamRequest)
         {
@@ -57,6 +72,18 @@ namespace FootballLeague_Interview.Controllers
                 return BadRequest(aEx.Message);
             }
         }
+
+        // It doesn't really make sense to update a team since all of it's fields are part of its PK. If a mistake has been made, delete 
+        // the dirty Team using the DELETE endpoint and insert a new one.  
+
+
+        /// <summary>
+        /// Deletes an existing Team object
+        /// </summary>
+        /// <param name="teamName">The name of the Team object to delete</param>
+        /// <param name="leagueName">The name of the League in which the Team to delete plays in</param>
+        /// <response code="200">The Team has been deleted</response>
+        /// <response code="400">Cannot delete Team with the given parameters</response>
 
         [HttpDelete]
         public async Task<ActionResult> DeleteTeam(

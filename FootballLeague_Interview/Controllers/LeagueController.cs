@@ -27,7 +27,7 @@ namespace FootballLeague_Interview.Controllers
         /// <param name="country">Filter Leagues based on country name</param>
         /// <param name="leagueNames">Find only Leagues whose names are contained in this list</param>
         /// <response code="200">Query is valid. The resulting collection may be empty though</response>
-        /// <response code="400">Cannot find league with the given parameters</response>
+        /// <response code="400">Cannot find Leagues with the given parameters</response>
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<LeagueDTO>>> GetLeagues(string country, [FromQuery] string[] leagueNames)
@@ -52,8 +52,8 @@ namespace FootballLeague_Interview.Controllers
         /// Create a new League object
         /// </summary>
         /// <param name="postLeagueRequest">Request used for creating the League object</param>
-        /// <response code="200">Query is valid. The resulting collection may be empty though</response>
-        /// <response code="400">Cannot find league with the given parameters</response>
+        /// <response code="201">League has been created</response>
+        /// <response code="400">Cannot create league from the given request</response>
 
 
         [HttpPost("create")]
@@ -71,6 +71,13 @@ namespace FootballLeague_Interview.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates an existing League object
+        /// </summary>
+        /// <param name="name">The name of the League object to update</param>
+        /// <param name="updateLeagueRequest">Request used for creating the League object</param>
+        /// <response code="200">The League has been updated</response>
+        /// <response code="400">Cannot update League with the given parameters</response>
 
         [HttpPost("update/{name}")]
         public async Task<ActionResult> UpdateTeam([FromQuery] string name, [FromBody] UpdateLeagueRequest updateLeagueRequest)
@@ -86,12 +93,19 @@ namespace FootballLeague_Interview.Controllers
             }
         }
 
+        /// <summary>
+        /// Deletes an existing League object
+        /// </summary>
+        /// <param name="name">The name of the League object to delete</param>
+        /// <response code="200">The League has been deleted</response>
+        /// <response code="400">Cannot delete League with the given parameters</response>
+
         [HttpDelete("{league}")]
-        public async Task<ActionResult> DeleteTeam(string leagueId)
+        public async Task<ActionResult> DeleteTeam(string name)
         {
             try
             {
-                await _leagueService.DeleteAsync(leagueId);
+                await _leagueService.DeleteAsync(name);
                 return Ok();
             }
             catch (ArgumentException aEx)

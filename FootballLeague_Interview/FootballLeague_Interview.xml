@@ -11,15 +11,134 @@
             <param name="country">Filter Leagues based on country name</param>
             <param name="leagueNames">Find only Leagues whose names are contained in this list</param>
             <response code="200">Query is valid. The resulting collection may be empty though</response>
-            <response code="400">Cannot find league with the given parameters</response>
+            <response code="400">Cannot find Leagues with the given parameters</response>
         </member>
         <member name="M:FootballLeague_Interview.Controllers.LeagueController.PostLeague(FootballLeague_Interview.Shared.DTO.Request.PostLeagueRequest)">
             <summary>
             Create a new League object
             </summary>
             <param name="postLeagueRequest">Request used for creating the League object</param>
+            <response code="201">League has been created</response>
+            <response code="400">Cannot create league from the given request</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.LeagueController.UpdateTeam(System.String,FootballLeague_Interview.Shared.DTO.Request.UpdateLeagueRequest)">
+            <summary>
+            Updates an existing League object
+            </summary>
+            <param name="name">The name of the League object to update</param>
+            <param name="updateLeagueRequest">Request used for creating the League object</param>
+            <response code="200">The League has been updated</response>
+            <response code="400">Cannot update League with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.LeagueController.DeleteTeam(System.String)">
+            <summary>
+            Deletes an existing League object
+            </summary>
+            <param name="name">The name of the League object to delete</param>
+            <response code="200">The League has been deleted</response>
+            <response code="400">Cannot delete League with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.ResultController.GetResult(System.String,System.String,System.String,System.String)">
+            <summary>
+            Retrieves a list of Result objects
+            </summary>
+            <param name="season">Filter Results based on Season name. Should be in the format xxxx/xxxx(+1). E.g. 2020/2021</param>
+            <param name="league">Filter Results based on the League the matches were played in</param>
+            <param name="homeTeam">Filter Results based on the Home Team relative to the match</param>
+            <param name="awayTeam">Filter Results based on the Away Team relative to the match</param>
             <response code="200">Query is valid. The resulting collection may be empty though</response>
-            <response code="400">Cannot find league with the given parameters</response>
+            <response code="400">Cannot find Results with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.ResultController.PostResult(FootballLeague_Interview.Shared.DTO.Request.PostResultRequest)">
+            <summary>
+            Create a new Result object
+            </summary>
+            <param name="postResultRequest">Request used for creating the League object</param>
+            <response code="201">Result has been created</response>
+            <response code="400">Cannot create Result from the given request</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.ResultController.DeleteResult(System.String,System.String,System.String,System.String,System.Nullable{System.Boolean})">
+            <summary>
+            Deletes an existing Result object
+            </summary>
+            <param name="season">The deleted Result must be from this Season</param>
+            <param name="league">The deleted Result must be from this League</param>
+            <param name="homeTeam">The deleted Result's Home team name should be equal to this value</param>
+            <param name="awayTeam">The deleted Result's Away team name should be equal to this value</param>
+            <param name="rollback">Whether the respective Standings should be rollbacked with relevance to the deleted result</param>
+            <response code="200">The Result has been deleted</response>
+            <response code="400">Cannot delete Result with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.StandingsController.GetStandings(System.String,System.String)">
+            <summary>
+            Retrieves a list of Standings objects
+            </summary>
+            <param name="leagueName">Filter Results based on the League the matches were played in</param>
+            <param name="season">Filter Standings based on Season name. Should be in the format xxxx/xxxx(+1). E.g. 2020/2021</param>
+            <response code="200">Query is valid. The resulting collection may be empty though</response>
+            <response code="400">Cannot find Standings with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.StandingsController.InitiateStandings(FootballLeague_Interview.Shared.DTO.Request.InitiateStandingsRequest)">
+            <summary>
+            Initiates a Standings table for a given combination of Season and League. All the values in this table, e.g. Points, Goals Scored,
+            Goals Conceded, etc. are 0 for all teams. Before a Result can be POST-ed the respective Standings must be first initialized. 
+            </summary>
+            <param name="initiateStandingsRequest">Request used for intializing the Standings object</param>
+            <response code="201">Query is valid. The resulting collection may be empty though</response>
+            <response code="400">Cannot initialize Standings from the given reques</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.StandingsController.UpdateStandingsWithMatch(FootballLeague_Interview.Shared.DTO.Response.ResultDTO,System.Nullable{System.Boolean})">
+            <summary>
+            Updates an existing Standings object with the result from a match. 
+            </summary>
+            <param name="resultDTO">The name of the League object to update</param>
+            <param name="rollback">If the update should rollback the points/goals/etc. from the Result (if already applied to a Standings object)</param>
+            <response code="200">The Standings object has been updated</response>
+            <response code="400">Cannot update Standings object with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.StandingsController.UpdateStandingsRow(FootballLeague_Interview.Shared.DTO.Response.StandingsRowDTO)">
+            <summary>
+            Updates a row from an existing Standings manually. Should be used only there was a human/server error which led to the
+            corruption of data in one of the Standings tables.
+            </summary>
+            <param name="standingsRowDTO">Data with which to update the dirty row</param>
+            <response code="200">The Standings object has been updated</response>
+            <response code="400">Cannot update Standings object with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.StandingsController.DeleteStandings(System.String,System.String)">
+            <summary>
+            Deletes an existing Standings object
+            </summary>
+            <param name="season">The deleted Standings object must be from this Season</param>
+            <param name="league">The deleted Standings object must be from this League</param>
+            <response code="200">The Standings object has been deleted</response>
+            <response code="400">Cannot delete Standings object with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.TeamController.GetTeams(System.String,System.String[])">
+            <summary>
+            Retrieves a list of Team objects
+            </summary>
+            <param name="league">Filter Teams based on League name</param>
+            <param name="teamNames">Find only Teams whose names are contained in this list</param>
+            <response code="200">Query is valid. The resulting collection may be empty though</response>
+            <response code="400">Cannot find Teams with the given parameters</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.TeamController.PostTeam(FootballLeague_Interview.Shared.DTO.Request.PostTeamRequest)">
+            <summary>
+            Create a new Team object
+            </summary>
+            <param name="postTeamRequest">Request used for creating the League object</param>
+            <response code="201">Team has been created</response>
+            <response code="400">Cannot create Team from the given request</response>
+        </member>
+        <member name="M:FootballLeague_Interview.Controllers.TeamController.DeleteTeam(System.String,System.String)">
+            <summary>
+            Deletes an existing Team object
+            </summary>
+            <param name="teamName">The name of the Team object to delete</param>
+            <param name="leagueName">The name of the League in which the Team to delete plays in</param>
+            <response code="200">The Team has been deleted</response>
+            <response code="400">Cannot delete Team with the given parameters</response>
         </member>
     </members>
 </doc>
